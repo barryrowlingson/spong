@@ -1,0 +1,3 @@
+gridPolySmash <- function(g,sp){
+
+}

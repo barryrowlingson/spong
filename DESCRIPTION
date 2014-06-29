@@ -1,0 +1,14 @@
+Package: spong
+Type: Package
+Title: Spatial Objects - Next Generation
+Version: 1.0
+Date: 2014-06-29
+Author: Barry Rowlingson
+Maintainer: Barry Rowlingson <b.rowlingson@gmail.com>
+Description: Experiments in spatial objects
+License: GPL (>= 2)
+Roxygen: list(wrap = FALSE)
+Requires: rgeos
+    sp
+Suggests:
+    testthat
