@@ -13,11 +13,19 @@ geom <- function(x){
 }
 
 print.geom = function(x,...){
-  print(paste0(substr(x,1,10),"..."))
+    if("crs" %in% names(attributes(x))){
+        crs = attr(x,"crs")
+    }else{
+        crs="None"
+    }
+    print(paste0(substr(x,1,10),"..."))
+    cat("CRS:" ,crs,"\n")
+    
 }
 
 "[.geom" = function (x, ..., drop = TRUE) 
 {
+    
     cl = oldClass(x)
     class(x) = NULL
     val = NextMethod("[")
@@ -31,4 +39,24 @@ as.character.geom = function(x,...){
 
 format.geom = function(x,...){
   as.character.geom(x)
+}
+
+crs <- function(x){
+    NextMethod("crs")
+}
+
+crs.geom <- function(x){
+    if("crs" %in% names(attributes(x))){
+        return(attr(x,"crs"))
+    }
+    return("")
+}
+
+"crs<-" <- function(x,value){
+    NextMethod("crs<-")
+}
+
+"crs<-.geom" <- function(x,value){
+    attr(x,"crs")=value
+    x
 }

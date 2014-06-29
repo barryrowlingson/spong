@@ -17,10 +17,6 @@ as.spong.SpatialPolygonsDataFrame = function(spdf){
   df
 }
 
-plot.spong = function(x,...){
-  d = as.SpatialPolygonsDataFrame.spong(x)
-  plot(d,...)
-}
 
 ##' spong to spolydf
 ##'
