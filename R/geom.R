@@ -7,8 +7,9 @@
 ##' @return a geom vector
 ##' @author Barry Rowlingson
 ##' @export
-geom <- function(x){
+geom <- function(x, crs=NA){
     class(x)="geom"
+    attr(x,"crs")=crs
     return(x)
 }
 
@@ -26,10 +27,12 @@ print.geom = function(x,...){
 "[.geom" = function (x, ..., drop = TRUE) 
 {
     
+    xcrs=crs(x)
     cl = oldClass(x)
     class(x) = NULL
     val = NextMethod("[")
     class(val) = cl
+    crs(val)=xcrs
     val
 }
 
@@ -59,4 +62,21 @@ crs.geom <- function(x){
 "crs<-.geom" <- function(x,value){
     attr(x,"crs")=value
     x
+}
+
+geom_from_points <- function(spp){
+    g = geom(writeWKT(spp,byid=TRUE), crs=proj4string(spp))
+    g
+}
+
+as.data.frame.geom <- function(x, row.names=NULL, optional=FALSE,...,nm=paste(deparse(substitute(x),width.cutoff=500L),collapse=" ")){
+    value = list(x)
+    attr(value,"row.names") <- seq_along(x)
+    class(value)="data.frame"
+    value
+}
+
+plot.geom <- function(x,...){
+    pts = lapply(x, readWKT, p4s=crs(x))
+    plot(do.call(rbind,pts))
 }
