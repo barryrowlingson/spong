@@ -80,3 +80,32 @@ plot.geom <- function(x,...){
     pts = lapply(x, readWKT, p4s=crs(x))
     plot(do.call(rbind,pts))
 }
+
+geom2sp <- function(x){
+    p1 = readWKT(x[1])
+    if(class(p1)=="SpatialPoints"){
+        return(geom2pts(x))
+    }
+    if(class(p1)=="SpatialPolygons"){
+        return(geom2polys(x))
+    }
+    stop("Dont know how to convert ",class(p1))
+}
+
+
+geom2pts <- function(x){
+    geom2any(x, SpatialPointsDataFrame, "SpatialPoints")
+}
+
+geom2polys <- function(x){
+    geom2any(x, SpatialPolygonsDataFrame,"SpatialPolygons")
+}
+    
+geom2any <- function(x, f1, c2){
+    crs = crs(x)
+    out = lapply(1:length(x),function(i){f1(readWKT(x[i],id=i,p4s=crs),data.frame(x=1),match=FALSE)})
+    out = do.call(rbind,out)
+    out = as(out,c2)
+    proj4string(out)=crs
+    out
+}
