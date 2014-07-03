@@ -109,3 +109,11 @@ geom2any <- function(x, f1, c2){
     proj4string(out)=crs
     out
 }
+
+
+geomTransform <- function(g,t_crs){
+    sp = geom2sp(g)
+    sp = spTransform(sp, t_crs)
+    g = sp2geom(sp)
+    g
+}

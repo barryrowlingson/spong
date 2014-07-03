@@ -23,3 +23,9 @@ print.spong <- function(x,...){
     class(d)=c("spong","data.frame")
     d
 }
+
+setgeom <- function(d, value){
+    the_geom(d)=value
+    d
+}
+
