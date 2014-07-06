@@ -1,5 +1,5 @@
 
-coords_to_matrix <- function(s, np=4){
+coords_to_matrix <- function(s, np=4, cnames){
 ###
 ### convert "x y {z m}, x y {z m}" to matrix. NA padding if missing z/m
 ###
@@ -10,6 +10,7 @@ coords_to_matrix <- function(s, np=4){
     if(ncol(pts)!=np){
         stop("Error decoding points")
     }
+    colnames(pts)=cnames
     pts
 }
 
@@ -47,9 +48,30 @@ parseWKT <- function(p){
     return(p$dim + p$measured)
 }
 
+.names <- function(p){
+    cn = c("x","y")
+    if(p$dim == 3){
+        cn = c(cn,"z")
+    }
+    if(p$measured){
+        cn = c(cn,"m")
+    }
+    cn
+}
+
+.partRE = "\\(([^\\(\\)]*)\\)"
+
 
 parseWKT.POINT <- function(p){
-    partRE = "\\(([^\\(\\)]*)\\)"
-    parts = str_match_all(p$body, partRE)[[1]][,2]
-    coords_to_matrix(parts, .nvalues(p))
+    parts = str_match_all(p$body, .partRE)[[1]][,2]
+    coords_to_matrix(parts, .nvalues(p), .names(p))
+}
+
+parseWKT.POLYGON <- function(p){
+    parts = str_match_all(p$body, .partRE)[[1]][,2]
+    llply(parts,
+          function(part){
+              coords_to_matrix(part, .nvalues(p), .names(p))}
+    )
+    
 }
