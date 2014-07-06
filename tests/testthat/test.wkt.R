@@ -39,7 +39,7 @@ S = list(
     )
 
 for(ss in S){
-    sftd = parseWKT_head(ss$text)
+    sftd = parseWKT(ss$text)
     expect_equal(sftd$type, ss$type)
     expect_equal(sftd$dim, ss$dim)
 }

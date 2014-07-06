@@ -15,7 +15,7 @@ coords_to_matrix <- function(s, np=4, cnames){
 }
 
 
-parseWKT_head <- function(s){
+parseWKT <- function(s){
     sf_head = str_extract(s,"^\\s*([^\\(]*)")[[1]]
     sf_body = str_trim(str_sub(s, nchar(sf_head)+1))
     sf_type_dim = str_split(str_trim(sf_head)," +")[[1]]
@@ -36,12 +36,12 @@ parseWKT_head <- function(s){
         dim=dim,
         body=sf_body
         )
-    class(obj)=c("sf",sf_type)
+    class(obj)=c("wktparse",sf_type)
     obj
 }
 
-parseWKT <- function(p){
-    UseMethod("parseWKT")
+buildSF <- function(p){
+    UseMethod("buildSF")
 }
 
 .nvalues <- function(p){
@@ -62,12 +62,12 @@ parseWKT <- function(p){
 .partRE = "\\(([^\\(\\)]*)\\)"
 
 
-parseWKT.POINT <- function(p){
+buildSF.POINT <- function(p){
     parts = str_match_all(p$body, .partRE)[[1]][,2]
     coords_to_matrix(parts, .nvalues(p), .names(p))
 }
 
-parseWKT.POLYGON <- function(p){
+buildSF.POLYGON <- function(p){
     parts = str_match_all(p$body, .partRE)[[1]][,2]
     llply(parts,
           function(part){
