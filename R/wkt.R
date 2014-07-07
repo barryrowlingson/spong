@@ -68,10 +68,44 @@ buildSF.POINT <- function(p){
 }
 
 buildSF.POLYGON <- function(p){
-    parts = str_match_all(p$body, .partRE)[[1]][,2]
+    buildPOLYGON(p$body, .nvalues(p), .names(p))
+}
+
+buildPOLYGON <- function(p, nvalues, names){
+    parts = str_match_all(p, .partRE)[[1]][,2]
     llply(parts,
           function(part){
-              coords_to_matrix(part, .nvalues(p), .names(p))}
-    )
+              coords_to_matrix(part, nvalues, names)}
+          )
     
+}
+
+buildSF.MULTIPOLYGON <- function(p){
+    p$body = str_trim(p$body)
+    polygonsplits = commadepths(p$body)
+    commasplits = polygonsplits$pos[polygonsplits$depth==1]
+    starts=c(1,commasplits+1)
+    ends = c(commasplits-1, nchar(p$body)+10)
+    parts = str_sub(p$body, starts, ends)
+    llply(
+        parts,
+        function(pp){buildPOLYGON(pp, .nvalues(p), .names(p))}
+        )
+}
+
+commadepths = function(s){
+    parens = parendepths(s)
+    commas = str_locate_all(s,fixed(","))[[1]][,1]
+    commadepths = posdepth(commas,parens)
+    return(list(pos=commas, depth=commadepths))
+}
+
+posdepth = Vectorize(function(pos, parens){
+    sum(parens$open<pos) - sum(parens$close<pos)
+},"pos")
+    
+parendepths <- function(s,openclose=fixed(c("(",")"))){
+    pos=str_locate_all(s,openclose)
+    openclose = list(open=pos[[1]][,1],close=pos[[2]][,1])
+    openclose
 }
