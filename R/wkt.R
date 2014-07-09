@@ -109,3 +109,22 @@ parendepths <- function(s,openclose=fixed(c("(",")"))){
     openclose = list(open=pos[[1]][,1],close=pos[[2]][,1])
     openclose
 }
+
+nested2list <- function(s,level=1){
+    pd = parendepths(s)
+    opens  = posdepth(pd$open, pd)
+    closes = posdepth(pd$close, pd) - 1
+    if(opens[1]!=0){
+        stop("closing bracket before opening bracket")
+    }
+    if(closes[length(closes)]!=0){
+        stop("bracket mismatch")
+    }
+    l1opens = which(opens==level)
+    l1closes = which(closes==level)
+    items = list()
+    for(item in 1:length(l1opens)){
+        items[[item]]=substr(s,pd$open[l1opens[item]],pd$close[l1closes[item]])
+    }
+    items
+}
