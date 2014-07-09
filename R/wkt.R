@@ -68,7 +68,10 @@ buildSF.POINT <- function(p){
 }
 
 buildSF.POLYGON <- function(p){
-    buildPOLYGON(p$body, .nvalues(p), .names(p))
+    split = nested2list(p$body,1)
+    llply(split, function(part){
+        coords_to_matrix(part, .nvalues(p), .names(p))
+    })
 }
 
 buildPOLYGON <- function(p, nvalues, names){
@@ -81,26 +84,26 @@ buildPOLYGON <- function(p, nvalues, names){
 }
 
 buildSF.MULTIPOLYGON <- function(p){
-    p$body = str_trim(p$body)
-    polygonsplits = commadepths(p$body)
-    commasplits = polygonsplits$pos[polygonsplits$depth==1]
-    starts=c(1,commasplits+1)
-    ends = c(commasplits-1, nchar(p$body)+10)
-    parts = str_sub(p$body, starts, ends)
-    llply(
-        parts,
-        function(pp){buildPOLYGON(pp, .nvalues(p), .names(p))}
-        )
+    splitMulti = nested2list(p$body,1)
+
+    llply(splitMulti, function(polygon){
+        rings = nested2part(polygon,0)
+        llply(rings, function(
+            coords2matrix(nested2list(part,0), .nvalues(p), .names(p))
+        })
+    })
+        
+
 }
 
-commadepths = function(s){
+commadepths <- function(s){
     parens = parendepths(s)
     commas = str_locate_all(s,fixed(","))[[1]][,1]
     commadepths = posdepth(commas,parens)
     return(list(pos=commas, depth=commadepths))
 }
 
-posdepth = Vectorize(function(pos, parens){
+posdepth <- Vectorize(function(pos, parens){
     sum(parens$open<pos) - sum(parens$close<pos)
 },"pos")
     
@@ -124,7 +127,7 @@ nested2list <- function(s,level=1){
     l1closes = which(closes==level)
     items = list()
     for(item in 1:length(l1opens)){
-        items[[item]]=substr(s,pd$open[l1opens[item]],pd$close[l1closes[item]])
+        items[[item]]=substr(s,pd$open[l1opens[item]]+1,pd$close[l1closes[item]]-1)
     }
     items
 }
