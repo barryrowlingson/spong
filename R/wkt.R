@@ -64,14 +64,18 @@ buildSF <- function(p){
 
 buildSF.POINT <- function(p){
     parts = str_match_all(p$body, .partRE)[[1]][,2]
-    coords_to_matrix(parts, .nvalues(p), .names(p))
+    obj = coords_to_matrix(parts, .nvalues(p), .names(p))
+    class(obj)=c("sf","POINT")
+    obj
 }
 
 buildSF.POLYGON <- function(p){
     split = nested2list(p$body,1)
-    llply(split, function(part){
+    obj = llply(split, function(part){
         coords_to_matrix(part, .nvalues(p), .names(p))
     })
+    class(obj)=c("sf","POLYGON")
+    obj
 }
 
 buildPOLYGON <- function(p, nvalues, names){
@@ -85,15 +89,14 @@ buildPOLYGON <- function(p, nvalues, names){
 
 buildSF.MULTIPOLYGON <- function(p){
     splitMulti = nested2list(p$body,1)
-
-    llply(splitMulti, function(polygon){
-        rings = nested2part(polygon,0)
-        llply(rings, function(
-            coords2matrix(nested2list(part,0), .nvalues(p), .names(p))
+    obj = llply(splitMulti, function(polygon){
+        rings = nested2list(polygon,0)
+        llply(rings, function(part){
+            coords_to_matrix(part, .nvalues(p), .names(p))
         })
     })
-        
-
+    class(obj)=c("sf","MULTIPOLYGON")
+    obj
 }
 
 commadepths <- function(s){
