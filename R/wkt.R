@@ -37,7 +37,11 @@ parseWKT <- function(s){
         body=sf_body
         )
     class(obj)=c("wktparse",sf_type)
-    obj
+    sf = buildSF(obj)
+    attr(sf,"type")=obj$type
+    attr(sf,"dimension")=obj$dim
+    attr(sf,"measured")=obj$measured
+    sf
 }
 
 buildSF <- function(p){
@@ -63,9 +67,14 @@ buildSF <- function(p){
 
 
 buildSF.POINT <- function(p){
-    parts = str_match_all(p$body, .partRE)[[1]][,2]
-    obj = coords_to_matrix(parts, .nvalues(p), .names(p))
+    obj = coords_to_matrix(nested2list(p$body,0)[[1]], .nvalues(p), .names(p))
     class(obj)=c("sf","POINT")
+    obj
+}
+
+buildSF.LINESTRING <- function(p){
+    obj = coords_to_matrix(nested2list(p$body,0)[[1]], .nvalues(p), .names(p))
+    class(obj)=c("sf","LINESTRING")
     obj
 }
 
@@ -134,3 +143,21 @@ nested2list <- function(s,level=1){
     }
     items
 }
+
+sp2wkt <- function(spob){
+    wkts = writeWKT(spob, byid=TRUE)
+    llply(wkts,
+          function(w){
+              buildSF(parseWKT(w))
+          }
+          )
+}
+
+    
+print.sf <- function(x, ...){
+    cat("simple features ",attr(x,"type")," object\n")
+    cat("dimension: ",attr(x,"dimension"),"\n")
+    cat("measured: ",attr(x,"measured"),"\n")
+    ## NextMethod()
+}
+

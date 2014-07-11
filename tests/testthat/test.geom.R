@@ -6,10 +6,10 @@ test_that("geom classes", {
     
     w = readWKT(s1)
     
-    g1 = geom(s)
+    g1 = geom(s1)
     crs(g1)="+init=epsg:4326"
 
-    g2 = geom(s, "+init=epsg:4326")
+    g2 = geom(s1, "+init=epsg:4326")
     expect_identical(g1,g2)
         
     g1 = geom(c(s1,s2,s3))

@@ -1,4 +1,4 @@
-S = list(
+samples = list(
     list(text = "POINT (1 1)",
          type="POINT",
          dim=2,
@@ -38,12 +38,12 @@ S = list(
          measure=FALSE)
     )
 
-for(ss in S){
+for(ss in samples){
     sftd = parseWKT(ss$text)
-    expect_equal(sftd$type, ss$type)
-    expect_equal(sftd$dim, ss$dim)
+    expect_equal(attr(sftd,"type"), ss$type)
+    expect_equal(attr(sftd,"dimension"), ss$dim)
 }
-    
+
       
 polyhole = "POLYGON ((35 10, 45 45, 15 40, 10 20, 35 10),(20 30, 35 35, 30 20, 20 30))"
 
@@ -64,6 +64,8 @@ multipolygon = "MULTIPOLYGON(
 (-0.18 -0.41,0.26 0.01,0.98 -0.66,-0.18 -0.41),(0.14 -0.38,0.17 -0.24,0.38 -0.28,0.38 -0.45,0.14 -0.38))
 
 )"
+
+
 
 # MULTIPOLYGON   |--- POLYGON  ----|      |--- POLYGON ---|
 # (              (( pairs ),(pairs))  ,   ((pairs),(pairs))  )
