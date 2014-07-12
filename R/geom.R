@@ -36,6 +36,10 @@ print.geom = function(x,...){
     val
 }
 
+#c.geom <- function(..., recursive=FALSE){
+#structure(c(unlist(lapply(list(...), unclass))), class = "geom")
+#}
+
 as.character.geom = function(x,...){
   paste0(substr(x,1,10),"...")
 }

@@ -41,7 +41,7 @@ parseWKT <- function(s){
     attr(sf,"type")=obj$type
     attr(sf,"dimension")=obj$dim
     attr(sf,"measured")=obj$measured
-    sf
+    structure(list(sf),class="sfs")
 }
 
 buildSF <- function(p){
@@ -161,3 +161,15 @@ print.sf <- function(x, ...){
     ## NextMethod()
 }
 
+c.sf <- function(..., recursive=FALSE){
+    structure(list(...), class = "sfs")
+}
+
+format.sfs <- function(x,...){
+    sapply(x,function(sfo){attr(sfo,"type")})
+}
+
+summary.sfs <- function(object,...){
+    types = sapply(d$ss,function(sfo){attr(sfo,"type")})
+    table(types)
+}
