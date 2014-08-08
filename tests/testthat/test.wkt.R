@@ -39,7 +39,7 @@ samples = list(
     )
 
 for(ss in samples){
-    sftd = parseWKT(ss$text)
+    sftd = parseWKT(ss$text)[[1]]
     expect_equal(attr(sftd,"type"), ss$type)
     expect_equal(attr(sftd,"dimension"), ss$dim)
 }
