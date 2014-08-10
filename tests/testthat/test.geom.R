@@ -5,15 +5,15 @@ test_that("geom classes", {
     s3 = parseWKT("POLYGON ((2 0, 3 1, 2 1, 2 0))")
     
     
-    g1 = geom(s1)
+    g1 = geom1(s1)
     crs(g1)="+init=epsg:4326"
 
-    g2 = geom(s1, "+init=epsg:4326")
+    g2 = geom1(s1, "+init=epsg:4326")
     expect_identical(g1,g2)
         
-    g1 = geom(c(s1,s2,s3))
+    g1 = geom(list(s1,s2,s3))
     crs(g1)="+init=epsg:4326"
-    g2 = geom(c(s1,s2,s3))
+    g2 = geom(list(s1,s2,s3))
     crs(g2)="+init=epsg:4326"
     expect_identical(g1,g2)
 

@@ -44,6 +44,7 @@ for(ss in samples){
     expect_equal(attr(sftd,"dimension"), ss$dim)
 }
 
+
       
 polyhole = "POLYGON ((35 10, 45 45, 15 40, 10 20, 35 10),(20 30, 35 35, 30 20, 20 30))"
 
@@ -69,3 +70,7 @@ multipolygon = "MULTIPOLYGON(
 
 # MULTIPOLYGON   |--- POLYGON  ----|      |--- POLYGON ---|
 # (              (( pairs ),(pairs))  ,   ((pairs),(pairs))  )
+
+mp = parseWKT(multipolygon)
+expect_error(c(mp,mp))
+

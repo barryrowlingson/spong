@@ -3,14 +3,24 @@
 ##'
 ##' geometry class
 ##' @title create a geom class
-##' @param x a vector
+##' @param x a list of simple features (sf) class objects
 ##' @return a geom vector
 ##' @author Barry Rowlingson
 ##' @export
 geom <- function(x, crs=NA){
+    sfs = llply(x, function(ob){
+        if(!inherits(ob,"sf")){
+            stop("non-simple features object in geom constructor")
+        }
+        ob
+    })
     class(x)="geom"
     attr(x,"crs")=crs
     return(x)
+}
+
+geom1 <- function(g,...){
+    geom(list(g),...)
 }
 
 print.geom = function(x,...){
@@ -19,7 +29,7 @@ print.geom = function(x,...){
     }else{
         crs="None"
     }
-    print(paste0(substr(x,1,10),"..."))
+    print(format(x,...))
     cat("CRS:" ,crs,"\n")
     
 }
@@ -40,8 +50,24 @@ print.geom = function(x,...){
 #structure(c(unlist(lapply(list(...), unclass))), class = "geom")
 #}
 
+c.geom <- function(...,recursive=FALSE){
+###
+### make a vectype - check all args are vectypes
+###
+    llply(list(...),function(ob){
+        if(!inherits(ob,"geom")){
+            stop("Can't join non-geoms to a geom")
+        }
+    })
+    obs = NextMethod()
+    class(obs) <- "geom"
+    obs
+}
+
+
 as.character.geom = function(x,...){
-  paste0(substr(x,1,10),"...")
+    ## must return same length as x
+    return(sapply(x,function(ob){attr(ob,"type")}))
 }
 
 format.geom = function(x,...){
@@ -73,12 +99,34 @@ geom_from_points <- function(spp){
     g
 }
 
-as.data.frame.geom <- function(x, row.names=NULL, optional=FALSE,...,nm=paste(deparse(substitute(x),width.cutoff=500L),collapse=" ")){
-    value = list(x)
-    attr(value,"row.names") <- seq_along(x)
-    class(value)="data.frame"
+as.data.frame.geom <- function (x, row.names = NULL,
+                                optional = FALSE, ...,
+                                nm = paste(
+                                    deparse(substitute(x),width.cutoff = 500L),
+                                    collapse = " ")
+                                ) {
+###
+### needed for data.frame(z=vectype(...))
+###
+    force(nm)
+    nrows <- length(x)
+    if (is.null(row.names)) {
+        if (nrows == 0L) 
+            row.names <- character()
+        else if (length(row.names <- names(x)) == nrows && !anyDuplicated(row.names)) {
+        }
+        else row.names <- .set_row_names(nrows)
+    }
+    if (!is.null(names(x))) 
+        names(x) <- NULL
+    value <- list(x)
+    if (!optional) 
+        names(value) <- nm
+    attr(value, "row.names") <- row.names
+    class(value) <- "data.frame"
     value
 }
+
 
 plot.geom <- function(x,...){
     pts = lapply(x, readWKT, p4s=crs(x))

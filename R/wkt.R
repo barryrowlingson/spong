@@ -162,7 +162,8 @@ print.sf <- function(x, ...){
 }
 
 c.sf <- function(..., recursive=FALSE){
-    structure(list(...), class = "sfs")
+    stop("don't make longer vectors of simple features objects")
+    list(...)
 }
 
 format.sfs <- function(x,...){
