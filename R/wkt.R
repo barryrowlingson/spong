@@ -148,7 +148,7 @@ sp2wkt <- function(spob){
     wkts = writeWKT(spob, byid=TRUE)
     llply(wkts,
           function(w){
-              buildSF(parseWKT(w))
+              parseWKT(w)
           }
           )
 }
@@ -166,11 +166,3 @@ c.sf <- function(..., recursive=FALSE){
     list(...)
 }
 
-format.sfs <- function(x,...){
-    sapply(x,function(sfo){attr(sfo,"type")})
-}
-
-summary.sfs <- function(object,...){
-    types = sapply(d$ss,function(sfo){attr(sfo,"type")})
-    table(types)
-}

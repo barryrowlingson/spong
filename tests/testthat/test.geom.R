@@ -11,8 +11,7 @@ test_that("geom classes", {
     g2 = geom1(s1, "+init=epsg:4326")
     expect_identical(g1,g2)
         
-    g1 = geom(list(s1,s2,s3))
-    crs(g1)="+init=epsg:4326"
+    g1 = geom(list(s1,s2,s3),"+init=epsg:4326")
     g2 = geom(list(s1,s2,s3))
     crs(g2)="+init=epsg:4326"
     expect_identical(g1,g2)

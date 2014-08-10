@@ -8,12 +8,11 @@
 ##' @author Barry Rowlingson
 ##' @export
 geom <- function(x, crs=NA){
-    sfs = llply(x, function(ob){
+    for(ob in x){
         if(!inherits(ob,"sf")){
             stop("non-simple features object in geom constructor")
         }
-        ob
-    })
+    }
     class(x)="geom"
     attr(x,"crs")=crs
     return(x)
