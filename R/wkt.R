@@ -67,18 +67,21 @@ buildSF <- function(p){
 
 
 buildSF.POINT <- function(p){
+    ## a 1-row matrix
     obj = coords_to_matrix(nested2list(p$body,0)[[1]], .nvalues(p), .names(p))
     class(obj)=c("sf","POINT")
     obj
 }
 
 buildSF.LINESTRING <- function(p){
+    ## an N-row matrix
     obj = coords_to_matrix(nested2list(p$body,0)[[1]], .nvalues(p), .names(p))
     class(obj)=c("sf","LINESTRING")
     obj
 }
 
 buildSF.POLYGON <- function(p){
+    ## a list - outer polygon then possible holes
     split = nested2list(p$body,1)
     obj = llply(split, function(part){
         coords_to_matrix(part, .nvalues(p), .names(p))
@@ -97,6 +100,7 @@ buildPOLYGON <- function(p, nvalues, names){
 }
 
 buildSF.MULTIPOLYGON <- function(p){
+    ## a list of POLYGON objects
     splitMulti = nested2list(p$body,1)
     obj = llply(splitMulti, function(polygon){
         rings = nested2list(polygon,0)
