@@ -10,5 +10,6 @@ License: GPL (>= 2)
 Roxygen: list(wrap = FALSE)
 Requires: rgeos
     sp
+    stringr
 Suggests:
     testthat

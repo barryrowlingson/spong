@@ -41,7 +41,7 @@ parseWKT <- function(s){
     attr(sf,"type")=obj$type
     attr(sf,"dimension")=obj$dim
     attr(sf,"measured")=obj$measured
-    structure(list(sf),class="sfs")
+    sf
 }
 
 buildSF <- function(p){
