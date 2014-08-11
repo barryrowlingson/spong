@@ -21,25 +21,25 @@ c.sf <- function(..., recursive=FALSE){
 
 ### bounds of sf object
 
-bounds <- function(sfo, ...){
+bounds <- function(x, ...){
     UseMethod("bounds")
 }
 
-bounds.POINT <- function(sfo, ...){
-    data.frame(xmin=sfo[1], xmax=sfo[1], ymin=sfo[2], ymax=sfo[2])
+bounds.POINT <- function(x, ...){
+    c(xmin=x[1], xmax=x[1], ymin=x[2], ymax=x[2])
 }
 
-bounds.POLYGON <- function(sfo, ...){
+bounds.POLYGON <- function(x, ...){
     ## first ring must be outside
-    xr=range(sfo[[1]][,1])
-    yr=range(sfo[[1]][,2])
-    data.frame(xmin=xr[1], xmax=xr[2], ymin=yr[1], ymax=yr[2])
+    xr=range(x[[1]][,1])
+    yr=range(x[[1]][,2])
+    c(xmin=xr[1], xmax=xr[2], ymin=yr[1], ymax=yr[2])
 }
 
-bounds.MULTIPOLYGON <- function(sfo, ...){
+bounds.MULTIPOLYGON <- function(x, ...){
     ## bounds of all first rings of all top-level elements
-    bb = apply(sapply(sfo, function(r){apply(r[[1]],2,range)}),2,range)
-    data.frame(xmin=bb[1,1], xmax=bb[2,1], ymin=bb[1,2], ymax=bb[2,2])
+    bb = apply(sapply(x, function(r){apply(r[[1]],2,range)}),2,range)
+    c(xmin=bb[1,1], xmax=bb[2,1], ymin=bb[1,2], ymax=bb[2,2])
 }
 
 ### drawing sf objects
@@ -49,12 +49,11 @@ draw <- function(sfo, ...){
 }
 
 draw.sf <- function(sfo, ...){
-    cat("plot...\n")
     NextMethod()
 }
 
 draw.POINT <- function(sfo, ...){
-    cat("point\n")
+    points(sfo[1],sfo[2],...)
 }
 
 draw.POLYGON <- function(sfo, ...){

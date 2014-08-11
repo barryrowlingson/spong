@@ -127,9 +127,20 @@ as.data.frame.geom <- function (x, row.names = NULL,
 }
 
 
+bounds.geom <- function(x,...){
+    b = as.data.frame(sapply(x, bounds))
+    c(xmin=min(b[1,]),
+         xmax=max(b[2,]),
+         ymin=min(b[3,]),
+         ymax=max(b[4,]))
+}
+
+
 plot.geom <- function(x,...){
-    pts = lapply(x, readWKT, p4s=crs(x))
-    plot(do.call(rbind,pts))
+    box = bounds(x)
+    plot(box[c(1,2)], box[c(3,4)],type="n")
+    lapply(x, draw, ...)
+    invisible(0)
 }
 
 geom2sp <- function(x){
