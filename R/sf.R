@@ -57,10 +57,23 @@ draw.POINT <- function(sfo, ...){
 }
 
 draw.POLYGON <- function(sfo, ...){
-    cat("polygon...\n")
+    polygon(do.call("rbind",sfo),...,border=NA, col="red")
+    for(i in 1:length(sfo)){
+        lines(sfo[[i]],...)
+    }
 }
 
 draw.LINESTRING <- function(sfo, ...){
-    cat("line string\n")
+    lines(sfo,...)
 }
 
+draw.MULTIPOLYGON <- function(sfo,...){
+    for(p in sfo){
+        polygon(do.call("rbind",p),...,border=NA, col="red")
+    }
+    for(p in sfo){
+        for(r in p){
+            lines(r, ...)
+        }
+    }
+}
