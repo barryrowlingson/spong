@@ -52,22 +52,22 @@ draw.sf <- function(sfo, ...){
     NextMethod()
 }
 
-draw.POINT <- function(sfo, ...){
-    points(sfo[1],sfo[2],...)
+draw.POINT <- function(sfo, pointstyle, ...){
+    do.call("points",makePointStyle(list(x=sfo[1],y=sfo[2],...)))
 }
 
-draw.POLYGON <- function(sfo, ...){
+draw.POLYGON <- function(sfo, linestyle, fillstyle, ...){
     polygon(do.call("rbind",sfo),...,border=NA, col="red")
     for(i in 1:length(sfo)){
         lines(sfo[[i]],...)
     }
 }
 
-draw.LINESTRING <- function(sfo, ...){
+draw.LINESTRING <- function(sfo, linestyle, ...){
     lines(sfo,...)
 }
 
-draw.MULTIPOLYGON <- function(sfo,...){
+draw.MULTIPOLYGON <- function(sfo, linestyle, fillstyle, ...){
     for(p in sfo){
         polygon(do.call("rbind",p),...,border=NA, col="red")
     }
